@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NovaSmart AI Governance - End-to-End Architecture Diagram</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 30px;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: #1e293b;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        h1 {
+            color: #38bdf8;
+            margin-top: 0;
+            border-bottom: 2px solid #334155;
+            padding-bottom: 12px;
+        }
+        .subtitle {
+            color: #94a3b8;
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+        }
+        .diagram-box {
+            background-color: #0f172a;
+            padding: 25px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            overflow-x: auto;
+            display: flex;
+            justify-content: center;
+        }
+        .raw-section {
+            margin-top: 35px;
+        }
+        h2 {
+            color: #f59e0b;
+            font-size: 1.2rem;
+        }
+        pre {
+            background-color: #0f172a;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            color: #e2e8f0;
+            overflow-x: auto;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>NovaSmart AI Governance Architecture</h1>
+        <div class="subtitle">End-to-End Estate Flow: Ingress Guardrail Floor, Agent Registry, A2A Identity Isolation, & Evaluation Pipeline</div>
+
+        <div class="diagram-box">
+            <div class="mermaid">
+graph TD
+    classDef client fill:#3b82f6,stroke:#1d4ed8,color:#ffffff,font-weight:bold
+    classDef security fill:#ef4444,stroke:#b91c1c,color:#ffffff,font-weight:bold
+    classDef gateway fill:#f59e0b,stroke:#d97706,color:#ffffff,font-weight:bold
+    classDef agent fill:#10b981,stroke:#047857,color:#ffffff,font-weight:bold
+    classDef shadow fill:#6b7280,stroke:#374151,color:#ffffff,font-weight:bold
+    classDef data fill:#8b5cf6,stroke:#6d28d9,color:#ffffff,font-weight:bold
+    classDef eval fill:#ec4899,stroke:#be185d,color:#ffffff,font-weight:bold
+
+    subgraph CLIENT_LAYER["Client & Ingress Request Layer"]
+        C1["Legitimate User Request"]:::client
+        C2["Adversarial Prompt Injection / Jailbreak"]:::client
+    end
+
+    subgraph PERIMETER["Perimeter Defense & Ingress Screening"]
+        MA["Model Armor Ingress Filter Gate"]:::security
+        BLOCK["HTTP 403 Access Denied (Blocked at Boundary)"]:::security
+    end
+
+    subgraph FLEET_CATALOG["Agent Registry & Fleet Governance (M0 / M1)"]
+        AR["Gemini Enterprise Agent Registry"]:::gateway
+    end
+
+    subgraph AGENT_ESTATE["Reasoning Engine Runtime Layer (Vertex AI)"]
+        PA["Price Match Agent (Frontline)\n[Identity: price-match-sa]"]:::agent
+        MA_AGENT["Markdown Strategy Agent (Back-Office)\n[Identity: markdown-strategy-sa]"]:::agent
+        PER_AGENT["Personalization Agent\n[Identity: personalization-sa]"]:::agent
+        SHADOW["promo-agent-shadow (Unmapped Shadow Agent)\n[Identity: promo-agent-sa]"]:::shadow
+    end
+
+    subgraph IAM_BOUNDARIES["A2A & Data Access Boundaries (M2)"]
+        A2A["A2A Caller List Filter\n(Allows ONLY price-match-sa)"]:::security
+        IAM_BQ["BigQuery IAM Least-Privilege Rules"]:::security
+    end
+
+    subgraph DATA_LAYER["BigQuery Data Layer"]
+        BQ_COMP["competitor_data.prices"]:::data
+        BQ_PRICING["novasmart_pricing.cost_margin"]:::data
+        BQ_CUST["customer_data.customers (PII)"]:::data
+    end
+
+    subgraph AUDIT_LAYER["Observability & Audit (M4)"]
+        TRACE["Cloud Trace & Input/Output Payload Logging"]:::gateway
+        BQ_AUDIT["BigQuery Governance Audit Log Export"]:::data
+    end
+
+    subgraph OFFLINE_EVAL["Offline Evaluation & Synthesis Pipeline (M5)"]
+        SCAFFOLD["Local Throwaway Scaffold (/tmp/m5-local)"]:::eval
+        SYNTH["agents-cli eval dataset synthesize (N=10 Edge Cases)"]:::eval
+        LOCAL_AGENT["Local Copy of Agent Code (Escalation Removed)"]:::eval
+        SCORECARD["Governance Scorecard & Instruction Diff Review"]:::eval
+    end
+
+    %% Client Ingress Flow
+    C1 -->|"Clean Payload"| MA
+    C2 -->|"Malicious Payload"| MA
+    MA -->|"Prompt Injection Detected"| BLOCK
+    MA -->|"Validated Payload"| PA
+
+    %% Catalog & Registry
+    AR ---|"Discovers & Tracks"| PA
+    AR ---|"Discovers & Tracks"| MA_AGENT
+    AR ---|"Discovers & Tracks"| PER_AGENT
+    AR ---|"Flags Unmapped Owner"| SHADOW
+
+    %% Agent Execution & A2A
+    PA -->|"Tool Call: query_competitor_pricing"| BQ_COMP
+    PA -->|"Escalation (>10% Discount)"| A2A
+    A2A -->|"Caller Token Verified"| MA_AGENT
+    MA_AGENT -->|"Query Cost & Margin"| BQ_PRICING
+
+    %% Data Access Controls & Failures
+    PER_AGENT -->|"Authorized Read (roles/bigquery.dataViewer)"| BQ_CUST
+    SHADOW -.-|"Unauthorized Query Attempt"| IAM_BQ
+    IAM_BQ -.-|"403 Permission Denied"| BQ_CUST
+
+    %% Logging & Tracing
+    PA --> TRACE
+    MA_AGENT --> TRACE
+    PER_AGENT --> TRACE
+    TRACE --> BQ_AUDIT
+
+    %% Offline Eval Pipeline
+    SCAFFOLD --> SYNTH
+    SYNTH --> LOCAL_AGENT
+    LOCAL_AGENT --> SCORECARD
+    SCORECARD -.-|"Local Instruction Fix (Un-deployed)"| PA
+            </div>
+        </div>
+
+        <div class="raw-section">
+            <h2>Raw Mermaid Definition</h2>
+            <pre>
+graph TD
+    classDef client fill:#3b82f6,stroke:#1d4ed8,color:#ffffff,font-weight:bold
+    classDef security fill:#ef4444,stroke:#b91c1c,color:#ffffff,font-weight:bold
+    classDef gateway fill:#f59e0b,stroke:#d97706,color:#ffffff,font-weight:bold
+    classDef agent fill:#10b981,stroke:#047857,color:#ffffff,font-weight:bold
+    classDef shadow fill:#6b7280,stroke:#374151,color:#ffffff,font-weight:bold
+    classDef data fill:#8b5cf6,stroke:#6d28d9,color:#ffffff,font-weight:bold
+    classDef eval fill:#ec4899,stroke:#be185d,color:#ffffff,font-weight:bold
+
+    subgraph CLIENT_LAYER["Client & Ingress Request Layer"]
+        C1["Legitimate User Request"]:::client
+        C2["Adversarial Prompt Injection / Jailbreak"]:::client
+    end
+
+    subgraph PERIMETER["Perimeter Defense & Ingress Screening"]
+        MA["Model Armor Ingress Filter Gate"]:::security
+        BLOCK["HTTP 403 Access Denied (Blocked at Boundary)"]:::security
+    end
+
+    subgraph FLEET_CATALOG["Agent Registry & Fleet Governance (M0 / M1)"]
+        AR["Gemini Enterprise Agent Registry"]:::gateway
+    end
+
+    subgraph AGENT_ESTATE["Reasoning Engine Runtime Layer (Vertex AI)"]
+        PA["Price Match Agent (Frontline)\n[Identity: price-match-sa]"]:::agent
+        MA_AGENT["Markdown Strategy Agent (Back-Office)\n[Identity: markdown-strategy-sa]"]:::agent
+        PER_AGENT["Personalization Agent\n[Identity: personalization-sa]"]:::agent
+        SHADOW["promo-agent-shadow (Unmapped Shadow Agent)\n[Identity: promo-agent-sa]"]:::shadow
+    end
+
+    subgraph IAM_BOUNDARIES["A2A & Data Access Boundaries (M2)"]
+        A2A["A2A Caller List Filter\n(Allows ONLY price-match-sa)"]:::security
+        IAM_BQ["BigQuery IAM Least-Privilege Rules"]:::security
+    end
+
+    subgraph DATA_LAYER["BigQuery Data Layer"]
+        BQ_COMP["competitor_data.prices"]:::data
+        BQ_PRICING["novasmart_pricing.cost_margin"]:::data
+        BQ_CUST["customer_data.customers (PII)"]:::data
+    end
+
+    subgraph AUDIT_LAYER["Observability & Audit (M4)"]
+        TRACE["Cloud Trace & Input/Output Payload Logging"]:::gateway
+        BQ_AUDIT["BigQuery Governance Audit Log Export"]:::data
+    end
+
+    subgraph OFFLINE_EVAL["Offline Evaluation & Synthesis Pipeline (M5)"]
+        SCAFFOLD["Local Throwaway Scaffold (/tmp/m5-local)"]:::eval
+        SYNTH["agents-cli eval dataset synthesize (N=10 Edge Cases)"]:::eval
+        LOCAL_AGENT["Local Copy of Agent Code (Escalation Removed)"]:::eval
+        SCORECARD["Governance Scorecard & Instruction Diff Review"]:::eval
+    end
+
+    %% Client Ingress Flow
+    C1 -->|"Clean Payload"| MA
+    C2 -->|"Malicious Payload"| MA
+    MA -->|"Prompt Injection Detected"| BLOCK
+    MA -->|"Validated Payload"| PA
+
+    %% Catalog & Registry
+    AR ---|"Discovers & Tracks"| PA
+    AR ---|"Discovers & Tracks"| MA_AGENT
+    AR ---|"Discovers & Tracks"| PER_AGENT
+    AR ---|"Flags Unmapped Owner"| SHADOW
+
+    %% Agent Execution & A2A
+    PA -->|"Tool Call: query_competitor_pricing"| BQ_COMP
+    PA -->|"Escalation (>10% Discount)"| A2A
+    A2A -->|"Caller Token Verified"| MA_AGENT
+    MA_AGENT -->|"Query Cost & Margin"| BQ_PRICING
+
+    %% Data Access Controls & Failures
+    PER_AGENT -->|"Authorized Read (roles/bigquery.dataViewer)"| BQ_CUST
+    SHADOW -.-|"Unauthorized Query Attempt"| IAM_BQ
+    IAM_BQ -.-|"403 Permission Denied"| BQ_CUST
+
+    %% Logging & Tracing
+    PA --> TRACE
+    MA_AGENT --> TRACE
+    PER_AGENT --> TRACE
+    TRACE --> BQ_AUDIT
+
+    %% Offline Eval Pipeline
+    SCAFFOLD --> SYNTH
+    SYNTH --> LOCAL_AGENT
+    LOCAL_AGENT --> SCORECARD
+    SCORECARD -.-|"Local Instruction Fix (Un-deployed)"| PA
+            </pre>
+        </div>
+    </div>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            securityLevel: 'loose'
+        });
+    </script>
+</body>
+</html>
