@@ -1,0 +1,97 @@
+================================================================================
+NOVASMART AI GOVERNANCE LAB - MISSION 2 EVIDENCE LOG
+STEP 2: CHECK THE COST, THEN LOCK IT TO THE FRONT DESK
+TIMESTAMP (UTC): 2026-09-24T07:45:35Z
+================================================================================
+
+--- HALF ONE: PREDICTIVE IMPACT ANALYSIS (READ-ONLY) ---
+
+Impact Table:
+| Caller | How it gets in today | After a lock to the front desk | Breaks? |
+| :--- | :--- | :--- | :--- |
+| Price Match Agent (Front Desk) | Project-wide Vertex AI User role | Explicitly bound on agent resource policy | No (Intended caller) |
+| Test Caller Service Account | Resource policy on back-office agent | Access removed from resource policy | Yes (Denied access) |
+| Store Portal Application | Project Owner / Editor compute role | Retains project-wide access | No (Bypasses agent policy) |
+| Project-Wide Access Holders (16 principals) | Project-wide IAM roles | Retains project-wide access | No (Rule C: Additive policies) |
+
+Judgment Question:
+Is it enough to put a deliberate access list on the agent itself, when a project-wide role can still walk past it?
+
+--- HALF TWO: MUTATIONS & EXECUTION ---
+
+1. EGRESS GATEWAY CREATION & ATTACHMENT:
+Gateway Name: projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/agentGateways/novasmart-egress-gateway
+Patch Command:
+curl -s -X PATCH -H "Authorization: Bearer <TOKEN>" -H "Content-Type: application/json" \
+  -d '{"spec":{"deploymentSpec":{"agentGatewayConfig":{"agentToAnywhereConfig":{"agentGateway":"projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/agentGateways/novasmart-egress-gateway"}}}}}' \
+  "https://us-west1-aiplatform.googleapis.com/v1beta1/projects/739897231255/locations/us-west1/reasoningEngines/6045101735372914688?updateMask=spec.deploymentSpec.agentGatewayConfig"
+
+2. BEFORE RESOURCE IAM POLICY (CAPTURD BEFORE REWRITE):
+Command: curl -s -X POST -H "Authorization: Bearer <TOKEN>" "https://us-west1-aiplatform.googleapis.com/v1beta1/projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/reasoningEngines/6045101735372914688:getIamPolicy"
+Result:
+{
+  "version": 1,
+  "etag": "BwZcH0Tp2XU=",
+  "bindings": [
+    {
+      "role": "roles/aiplatform.user",
+      "members": [
+        "serviceAccount:test-agent-caller@qwiklabs-gcp-02-9bc675d0f8db.iam.gserviceaccount.com"
+      ]
+    }
+  ]
+}
+
+3. RESOURCE IAM POLICY REWRITE (:setIamPolicy):
+Command:
+curl -s -X POST -H "Authorization: Bearer <TOKEN>" -H "Content-Type: application/json" \
+  -d '{
+    "policy": {
+      "version": 1,
+      "etag": "BwZcH0Tp2XU=",
+      "bindings": [
+        {
+          "role": "roles/aiplatform.user",
+          "members": [
+            "principal://agents.global.org-616463121992.system.id.goog/resources/aiplatform/projects/739897231255/locations/us-west1/reasoningEngines/2203531253225881600"
+          ]
+        }
+      ]
+    }
+  }' \
+  "https://us-west1-aiplatform.googleapis.com/v1beta1/projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/reasoningEngines/6045101735372914688:setIamPolicy"
+
+4. AFTER RESOURCE IAM POLICY (LIVE RE-READ):
+Command: curl -s -X POST -H "Authorization: Bearer <TOKEN>" "https://us-west1-aiplatform.googleapis.com/v1beta1/projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/reasoningEngines/6045101735372914688:getIamPolicy"
+Result:
+{
+  "version": 1,
+  "etag": "BwZcNcnAdyo=",
+  "bindings": [
+    {
+      "role": "roles/aiplatform.user",
+      "members": [
+        "principal://agents.global.org-616463121992.system.id.goog/resources/aiplatform/projects/739897231255/locations/us-west1/reasoningEngines/2203531253225881600"
+      ]
+    }
+  ]
+}
+
+5. CHANGE RECORD & UNDO COMMAND:
+To revert the Markdown Strategy Agent resource IAM policy to restore test-agent-caller access:
+curl -s -X POST -H "Authorization: Bearer <TOKEN>" -H "Content-Type: application/json" \
+  -d '{
+    "policy": {
+      "version": 1,
+      "etag": "BwZcNcnAdyo=",
+      "bindings": [
+        {
+          "role": "roles/aiplatform.user",
+          "members": [
+            "serviceAccount:test-agent-caller@qwiklabs-gcp-02-9bc675d0f8db.iam.gserviceaccount.com"
+          ]
+        }
+      ]
+    }
+  }' \
+  "https://us-west1-aiplatform.googleapis.com/v1beta1/projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/reasoningEngines/6045101735372914688:setIamPolicy"

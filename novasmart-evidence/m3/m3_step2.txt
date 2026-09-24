@@ -1,0 +1,48 @@
+NovaSmart Governance Lab - Module 3 Step 2 Evidence Log
+Generated At: 2026-09-24 08:13:45 UTC
+Location: us-west1
+
+================================================================================
+1. EXECUTED COMMANDS & AUDIT READS
+================================================================================
+Command 1: Model Armor Templates Listing
+  gcloud config set api_endpoint_overrides/modelarmor "https://modelarmor.us-west1.rep.googleapis.com/"
+  gcloud model-armor templates list --location=us-west1 --project=qwiklabs-gcp-02-9bc675d0f8db
+  REST API: GET https://modelarmor.us-west1.rep.googleapis.com/v1/projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/templates
+
+Command 2: Reasoning Engines Ingress Configuration Audit
+  GET https://us-west1-aiplatform.googleapis.com/v1beta1/projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/reasoningEngines/2203531253225881600
+  GET https://us-west1-aiplatform.googleapis.com/v1beta1/projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/reasoningEngines/4590439055732244480
+  GET https://us-west1-aiplatform.googleapis.com/v1beta1/projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/reasoningEngines/6045101735372914688
+
+================================================================================
+2. RAW AUDIT OUTPUTS
+================================================================================
+--- Model Armor Template Output ---
+Resource Name: projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/templates/nvst-jailbreak-template
+Filters Configured:
+  piAndJailbreakFilterSettings: ENABLED (MEDIUM_AND_ABOVE)
+  maliciousUriFilterSettings: ENABLED
+  raiSettings: HATE_SPEECH, HARASSMENT, SEXUALLY_EXPLICIT (MEDIUM_AND_ABOVE)
+Custom Error Code: 799
+Custom Error Message: "Your request was blocked by our content filter. Please rephrase your prompt and try again."
+
+--- Agent Deployment Spec Output ---
+Price Match Agent (2203531253225881600):
+  spec.deploymentSpec.agentGatewayConfig: null
+  spec.deploymentSpec.modelArmorConfig: null
+
+Customer Personalization Agent (4590439055732244480):
+  spec.deploymentSpec.agentGatewayConfig: null
+  spec.deploymentSpec.modelArmorConfig: null
+
+Markdown Strategy Agent (6045101735372914688):
+  spec.deploymentSpec.agentGatewayConfig: null
+  spec.deploymentSpec.modelArmorConfig: null
+
+================================================================================
+3. AUDIT VERIFICATION & COVERAGE SUMMARY
+================================================================================
+Check 1: Model Armor Template Ownership -> CONFIRMED (nvst-jailbreak-template exists)
+Check 2: Ingress Protection Enforcement -> INERT / UNATTACHED (0 agents protected)
+Coverage: 2 checks evidenced, 0 not verified.

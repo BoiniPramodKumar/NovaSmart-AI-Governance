@@ -1,0 +1,15 @@
+=== COMMANDS ===
+date -u +%Y-%m-%dT%H:%M:%SZ
+gcloud agent-registry services create promo-agent-shadow --location=us-west1 --agent-spec-type=no-spec --interfaces="url=https://promo-agent-shadow-a2peyk2ooq-uw.a.run.app,protocolBinding=http-json"
+gcloud agent-registry services update promo-agent-shadow --location=us-west1 --display-name="Promo Agent Shadow" --description="Promotional Marketing Agent running on Cloud Run | Owner: marketing-ops | Risk Tier: high"
+gcloud agent-registry services list --location=us-west1
+
+=== OUTPUTS ===
+2026-09-24T07:34:34Z
+name: projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/services/promo-agent-shadow
+displayName: Promo Agent Shadow
+description: Promotional Marketing Agent running on Cloud Run | Owner: marketing-ops | Risk Tier: high
+interfaces:
+- protocolBinding: HTTP_JSON
+  url: https://promo-agent-shadow-a2peyk2ooq-uw.a.run.app
+registryResource: projects/739897231255/locations/us-west1/agents/agentregistry-00000000-0000-0000-9545-392d5b92b188

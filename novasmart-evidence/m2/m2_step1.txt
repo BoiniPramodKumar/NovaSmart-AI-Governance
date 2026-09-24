@@ -1,0 +1,84 @@
+================================================================================
+NOVASMART AI GOVERNANCE LAB - MISSION 2 EVIDENCE LOG
+STEP 1: SEE WHO CAN CALL THE BACK OFFICE
+TIMESTAMP (UTC): 2026-09-24T07:41:12Z
+================================================================================
+
+--- BEFORE-STATE INTEGRITY CHECK ---
+
+1. PROJECT IAM POLICY FOR TEST-AGENT-CALLER:
+Command: gcloud projects get-iam-policy qwiklabs-gcp-02-9bc675d0f8db --flatten="bindings[].members" --filter="bindings.members:test-agent-caller"
+Result:
+Listed 0 items.
+(Expectation Verified: 0 project-level IAM roles held)
+
+2. CLOUD RUN SERVICES RUNNING AS TEST-AGENT-CALLER:
+Command: gcloud run services list --region=us-west1 --format="table(name, spec.template.spec.serviceAccountName)"
+Result:
+NAME                    SERVICE_ACCOUNT_NAME
+novasmart-mcp           739897231255-compute@developer.gserviceaccount.com
+novasmart-store-portal  739897231255-compute@developer.gserviceaccount.com
+promo-agent-shadow      novasmart-promo-sa@qwiklabs-gcp-02-9bc675d0f8db.iam.gserviceaccount.com
+(Expectation Verified: 0 Cloud Run services running as test-agent-caller)
+
+3. MARKDOWN STRATEGY AGENT RESOURCE IAM POLICY:
+Command: curl -s -X POST -H "Authorization: Bearer <TOKEN>" "https://us-west1-aiplatform.googleapis.com/v1beta1/projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/reasoningEngines/6045101735372914688:getIamPolicy"
+Result:
+{
+  "version": 1,
+  "etag": "BwZcH0Tp2XU=",
+  "bindings": [
+    {
+      "role": "roles/aiplatform.user",
+      "members": [
+        "serviceAccount:test-agent-caller@qwiklabs-gcp-02-9bc675d0f8db.iam.gserviceaccount.com"
+      ]
+    }
+  ]
+}
+(Expectation Verified: Exactly 1 resource binding naming test-agent-caller)
+
+--- PROJECT-WIDE IAM INVOKER AUDIT ---
+
+Command:
+roles checked: 65
+roles granting invoke: 6
+  - roles/owner
+  - roles/editor
+  - roles/aiplatform.admin
+  - roles/aiplatform.expressUser
+  - roles/aiplatform.serviceAgent
+  - roles/aiplatform.user
+
+principals who can invoke project-wide: 16
+  - principal://agents.global.org-616463121992.system.id.goog/resources/aiplatform/projects/739897231255/locations/us-west1/reasoningEngines/2203531253225881600 (Price Match Agent)
+  - principal://agents.global.org-616463121992.system.id.goog/resources/aiplatform/projects/739897231255/locations/us-west1/reasoningEngines/6045101735372914688 (Markdown Strategy Agent)
+  - serviceAccount:739897231255-compute@developer.gserviceaccount.com
+  - serviceAccount:739897231255@cloudbuild.gserviceaccount.com
+  - serviceAccount:739897231255@cloudservices.gserviceaccount.com
+  - serviceAccount:admiral@qwiklabs-services-prod.iam.gserviceaccount.com
+  - serviceAccount:antigravity-sa@qwiklabs-gcp-02-9bc675d0f8db.iam.gserviceaccount.com
+  - serviceAccount:lfs-automation@labs-for-sales-automation.iam.gserviceaccount.com
+  - serviceAccount:novasmart-customer-sa@qwiklabs-gcp-02-9bc675d0f8db.iam.gserviceaccount.com
+  - serviceAccount:novasmart-deployer-sa@qwiklabs-gcp-02-9bc675d0f8db.iam.gserviceaccount.com
+  - serviceAccount:novasmart-promo-sa@qwiklabs-gcp-02-9bc675d0f8db.iam.gserviceaccount.com
+  - serviceAccount:qwiklabs-gcp-02-9bc675d0f8db@qwiklabs-gcp-02-9bc675d0f8db.iam.gserviceaccount.com
+  - serviceAccount:service-739897231255@gcp-sa-aiplatform-re.iam.gserviceaccount.com
+  - serviceAccount:service-739897231255@gcp-sa-aiplatform.iam.gserviceaccount.com
+  - serviceAccount:service-739897231255@gcp-sa-discoveryengine.iam.gserviceaccount.com
+  - user:student-00-cccd9086fbbf@qwiklabs.net
+
+--- ROGUE CALL EXECUTION (TEST-AGENT-CALLER) ---
+
+Endpoint: https://us-west1-aiplatform.googleapis.com/v1beta1/projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/reasoningEngines/6045101735372914688/a2a/v1/message:send
+Payload: {"message": {"role": "user", "parts": [{"text": "What is the cost margin for SKU-HSE-4001?"}]}}
+
+HTTP Response Status: HTTP/2 400
+HTTP Response Body:
+{
+  "error": {
+    "code": 400,
+    "message": "Reasoning Engine Execution failed.\nPlease refer to our documentation (https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/troubleshooting/use) for checking logs and other troubleshooting tips.\nError Details: {\"message\":\"unknown exception\"}",
+    "status": "FAILED_PRECONDITION"
+  }
+}

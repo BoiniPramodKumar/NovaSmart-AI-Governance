@@ -1,0 +1,32 @@
+NovaSmart Governance Lab - Module 4 Step 1 Evidence Log
+Generated At: 2026-09-24 08:26:44 UTC
+Location: us-west1
+
+================================================================================
+1. AGENT TELEMETRY & PAYLOAD CAPTURE ENVIRONMENT VARIABLES AUDIT
+================================================================================
+Agent 1: Price Match Agent
+  Reasoning Engine ID: 2203531253225881600
+  GOOGLE_CLOUD_AGENT_ENGINE_ENABLE_TELEMETRY: "true"
+  OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT: "SPAN_AND_EVENT"
+  Status: ENABLED (Telemetry active, message content capture enabled in uppercase)
+
+Agent 2: Customer Personalization Agent
+  Reasoning Engine ID: 4590439055732244480
+  GOOGLE_CLOUD_AGENT_ENGINE_ENABLE_TELEMETRY: "true"
+  OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT: "SPAN_AND_EVENT"
+  Status: ENABLED (Telemetry active, message content capture enabled in uppercase)
+
+Agent 3: Markdown Strategy Agent
+  Reasoning Engine ID: 6045101735372914688
+  GOOGLE_CLOUD_AGENT_ENGINE_ENABLE_TELEMETRY: "true"
+  OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT: "span_and_event"
+  Status: NOT ENABLED (Defect: Lowercase "span_and_event" is ignored by OpenTelemetry SDK)
+
+================================================================================
+2. AUDIT VERIFICATION & COVERAGE SUMMARY
+================================================================================
+Check 1: Price Match Agent Telemetry -> ENABLED (SPAN_AND_EVENT)
+Check 2: Customer Personalization Agent Telemetry -> ENABLED (SPAN_AND_EVENT)
+Check 3: Markdown Strategy Agent Telemetry -> NOT ENABLED (Case-sensitivity defect "span_and_event")
+Coverage: 3 agents audited, 1 agent payload logging defect surfaced.

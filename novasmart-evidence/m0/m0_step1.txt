@@ -1,0 +1,60 @@
+=== COMMANDS ===
+date -u +%Y-%m-%dT%H:%M:%SZ
+which agents-cli
+agents-cli --version
+agents-cli info
+curl -s -H "Authorization: Bearer $(gcloud auth print-access-token)" -H "Content-Type: application/json" -X POST https://developerknowledge.googleapis.com/mcp -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+gcloud version
+gcloud config list
+gcloud services list --enabled --filter="name:(developerknowledge.googleapis.com agentregistry.googleapis.com aiplatform.googleapis.com run.googleapis.com bigquery.googleapis.com logging.googleapis.com)"
+ls -1 /config/Desktop/Session1/.agents/skills/novasmart-governance-lab/SKILL.md /config/Desktop/Session1/.agents/skills/novasmart-governance-lab/references/
+
+=== OUTPUTS ===
+2026-09-24T06:40:25Z
+
+/opt/venv/bin/agents-cli
+
+agents-cli, version 1.1.0
+
+CLI version:        1.1.0
+CLI install path:   /opt/venv/lib/python3.14/site-packages/google/agents/cli
+OS info:            Linux-7.0.0-1011-gcp-x86_64-with-glibc2.43
+Installed skills:   none
+
+{"id":1,"jsonrpc":"2.0","result":{"tools":[{"name":"search_documents"},{"name":"answer_query"},{"name":"get_documents"}]}}
+
+Google Cloud SDK 577.0.0
+alpha 2026.07.17
+beta 2026.07.17
+bq 2.1.35
+bundled-python3-unix 3.14.6
+core 2026.07.17
+gcloud-crc32c 1.0.0
+gsutil 5.37
+preview 2026.07.17
+
+[core]
+account = antigravity-sa@qwiklabs-gcp-02-9bc675d0f8db.iam.gserviceaccount.com
+disable_usage_reporting = True
+project = qwiklabs-gcp-02-9bc675d0f8db
+universe_domain = googleapis.com
+
+Your active configuration is: [default]
+
+NAME                               TITLE
+agentregistry.googleapis.com       Agent Registry API
+aiplatform.googleapis.com          Agent Platform API
+bigquery.googleapis.com            BigQuery API
+developerknowledge.googleapis.com  Developer Knowledge API
+logging.googleapis.com             Cloud Logging API
+run.googleapis.com                 Cloud Run Admin API
+
+/config/Desktop/Session1/.agents/skills/novasmart-governance-lab/SKILL.md
+
+/config/Desktop/Session1/.agents/skills/novasmart-governance-lab/references/:
+m0.md
+m1.md
+m2.md
+m3.md
+m4.md
+m5.md

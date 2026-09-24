@@ -1,0 +1,63 @@
+NovaSmart Governance Lab - Module 2 Step 4 Evidence Log
+Generated At: 2026-09-24 08:05:40 UTC
+Location: us-west1
+
+================================================================================
+1. IAP AUTHZ EXTENSION & POLICY CONFIGURATION
+================================================================================
+Authz Extension Name: novasmart-egress-ext
+Service: iap.googleapis.com
+failOpen: true
+timeout: 1s
+iapPolicyVersion: V1
+
+Authz Policy Name: novasmart-egress-policy
+Target: projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/agentGateways/novasmart-egress-gateway
+
+================================================================================
+2. FINE-GRAINED CEL POLICY ON BIGQUERY MCP SERVER
+================================================================================
+MCP Server ID: agentregistry-00000000-0000-0000-1b55-4f68ce4a095d
+Target: projects/739897231255/locations/global/iap_web/agentRegistry/mcpServers/agentregistry-00000000-0000-0000-1b55-4f68ce4a095d
+Role: roles/iap.egressor
+Allowed Principals:
+  - principal://agents.global.org-616463121992.system.id.goog/resources/aiplatform/projects/739897231255/locations/us-west1/reasoningEngines/2203531253225881600 (Price Match Agent)
+  - principal://agents.global.org-616463121992.system.id.goog/resources/aiplatform/projects/739897231255/locations/us-west1/reasoningEngines/6045101735372914688 (Markdown Strategy Agent)
+
+CEL Condition:
+  Title: Enforce_BigQuery_ReadOnly_Tools
+  Description: Allow only read-only BigQuery tool methods and MCP lifecycle
+  Expression: api.getAttribute('request.method', '') in ['initialize', 'tools/list', 'tools/call', 'notifications/initialized', 'ping', 'execute_sql_readonly', 'list_tables', 'get_table_schema', 'list_datasets']
+
+================================================================================
+3. GENERIC GOOGLE APIS ACCESS
+================================================================================
+Target Endpoints:
+  - Global: projects/739897231255/locations/global/iap_web/agentRegistry/endpoints/agentregistry-00000000-0000-0000-a58b-e3b617081d53
+  - Regional (us-west1): projects/739897231255/locations/us-west1/iap_web/agentRegistry/endpoints/agentregistry-00000000-0000-0000-1334-1914a36f0660
+Role: roles/iap.egressor
+Granted Principals: Price Match Agent, Markdown Strategy Agent
+
+================================================================================
+4. BIGQUERY DATABASE VERB NARROWING (LEAST PRIVILEGE)
+================================================================================
+Action Taken:
+  1. Removed blanket roles/bigquery.admin from Markdown Strategy Agent principal
+     principal://agents.global.org-616463121992.system.id.goog/resources/aiplatform/projects/739897231255/locations/us-west1/reasoningEngines/6045101735372914688
+  2. Granted project-level roles/bigquery.jobUser to Markdown Strategy Agent principal
+  3. Granted dataset-scoped READER access to Markdown Strategy Agent principal on datasets:
+     - novasmart_pricing
+     - competitor_data
+
+================================================================================
+5. GROUND TRUTH VERIFICATION READ
+================================================================================
+Query Run:
+  SELECT sku, margin_floor FROM `qwiklabs-gcp-02-9bc675d0f8db.novasmart_pricing.wholesale_costs` WHERE sku='SKU-HSE-4001'
+
+Result:
+  +--------------+--------------+
+  |     sku      | margin_floor |
+  +--------------+--------------+
+  | SKU-HSE-4001 |          240 |
+  +--------------+--------------+

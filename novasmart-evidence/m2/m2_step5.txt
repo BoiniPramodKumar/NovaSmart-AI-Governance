@@ -1,0 +1,76 @@
+NovaSmart Governance Lab - Module 2 Step 5 Evidence Log & Audit Report
+Generated At: 2026-09-24 08:07:30 UTC
+Location: us-west1
+
+================================================================================
+1. PHASE A READ-ONLY AUDIT RESULTS & EVIDENCE
+================================================================================
+Check 1: Egress Gateway Attachment
+  Surface: reasoningEngines/6045101735372914688 agentGatewayConfig
+  Observation: Gateway novasmart-egress-gateway configured and attached
+  Result: PASS
+
+Check 2: A2A Inbound Scoped Policy
+  Surface: reasoningEngines/6045101735372914688:getIamPolicy
+  Observation: Bindings name exclusively PMA principal (principal://agents.global.org-616463121992.system.id.goog/resources/aiplatform/projects/739897231255/locations/us-west1/reasoningEngines/2203531253225881600) under roles/aiplatform.user
+  Result: PASS
+
+Check 3: Rogue Caller Refusal
+  Surface: a2a/v1/message:send with test-agent-caller token
+  Observation: HTTP 403 PERMISSION_DENIED (Permission 'aiplatform.reasoningEngines.query' denied)
+  Result: PASS
+
+Check 4: Authorized Front-Desk Path
+  Surface: reasoningEngines/2203531253225881600:streamQuery (Price Match Agent)
+  Observation: Escalation for SKU-HSE-4001 ($296.65 vs shelf $349.00, 15% discount) succeeds and returns margin strategy from back office
+  Result: PASS
+
+Check 5: IAP Authz Extension & Policy
+  Surface: gcloud beta service-extensions authz-extensions describe novasmart-egress-ext
+  Observation: AuthzExtension novasmart-egress-ext active and wired to iap.googleapis.com
+  Result: PASS
+
+Check 6: BigQuery MCP CEL Policy
+  Surface: gcloud beta iap web get-iam-policy --resource-type=agent-registry --mcp-server=agentregistry-00000000-0000-0000-1b55-4f68ce4a095d
+  Observation: CEL expression active enforcing read-only tools and MCP lifecycle:
+    api.getAttribute('request.method', '') in ['initialize', 'tools/list', 'tools/call', 'notifications/initialized', 'ping', 'execute_sql_readonly', 'list_tables', 'get_table_schema', 'list_datasets']
+  Result: PASS
+
+Check 7: Generic Google APIs Access
+  Surface: gcloud beta iap web get-iam-policy --resource-type=agent-registry --endpoint=agentregistry-00000000-0000-0000-a58b-e3b617081d53
+  Observation: roles/iap.egressor granted to PMA and MSA principals
+  Result: PASS
+
+Check 8: Policy Scope & Zero Self-Grants
+  Surface: gcloud projects get-iam-policy qwiklabs-gcp-02-9bc675d0f8db
+  Observation: Zero self-grants; project IAM bindings untouched
+  Result: PASS
+
+================================================================================
+2. PROJECT-WIDE INVOKER PRINCIPALS (RAW AUDIT LIST)
+================================================================================
+Total Principals holding project-level roles with agent invoke permissions: 16
+Set aside (internal workload / approved front desk):
+  - Back Office MSA Principal: principal://agents.global.org-616463121992.system.id.goog/resources/aiplatform/projects/739897231255/locations/us-west1/reasoningEngines/6045101735372914688
+  - Front Desk PMA Principal: principal://agents.global.org-616463121992.system.id.goog/resources/aiplatform/projects/739897231255/locations/us-west1/reasoningEngines/2203531253225881600
+
+Full List of Project-Level Invoker Principals:
+  - principal://agents.global.org-616463121992.system.id.goog/resources/aiplatform/projects/739897231255/locations/us-west1/reasoningEngines/2203531253225881600
+  - principal://agents.global.org-616463121992.system.id.goog/resources/aiplatform/projects/739897231255/locations/us-west1/reasoningEngines/6045101735372914688
+  - serviceAccount:739897231255@cloudbuild.gserviceaccount.com
+  - serviceAccount:739897231255@cloudservices.gserviceaccount.com
+  - serviceAccount:739897231255-compute@developer.gserviceaccount.com
+  - serviceAccount:admiral@qwiklabs-services-prod.iam.gserviceaccount.com
+  - serviceAccount:antigravity-sa@qwiklabs-gcp-02-9bc675d0f8db.iam.gserviceaccount.com
+  - serviceAccount:lfs-automation@labs-for-sales-automation.iam.gserviceaccount.com
+  - serviceAccount:novasmart-customer-sa@qwiklabs-gcp-02-9bc675d0f8db.iam.gserviceaccount.com
+  - serviceAccount:novasmart-deployer-sa@qwiklabs-gcp-02-9bc675d0f8db.iam.gserviceaccount.com
+  - serviceAccount:novasmart-promo-sa@qwiklabs-gcp-02-9bc675d0f8db.iam.gserviceaccount.com
+  - serviceAccount:qwiklabs-gcp-02-9bc675d0f8db@qwiklabs-gcp-02-9bc675d0f8db.iam.gserviceaccount.com
+  - serviceAccount:service-739897231255@gcp-sa-aiplatform.iam.gserviceaccount.com
+  - serviceAccount:service-739897231255@gcp-sa-aiplatform-re.iam.gserviceaccount.com
+  - serviceAccount:service-739897231255@gcp-sa-discoveryengine.iam.gserviceaccount.com
+  - user:student-00-cccd9086fbbf@qwiklabs.net
+
+Coverage: 8 checks evidenced, 0 not verified.
+Scorecard Status: PASS

@@ -1,0 +1,62 @@
+================================================================================
+NOVASMART AI GOVERNANCE LAB - MISSION 2 EVIDENCE LOG
+STEP 3: PROVE THE ROGUE IS BLOCKED, AND CHECK THE FRONT DESK
+TIMESTAMP (UTC): 2026-09-24T08:00:37Z
+================================================================================
+
+1. LIVE ROGUE DIRECT A2A CALL (test-agent-caller):
+Endpoint: https://us-west1-aiplatform.googleapis.com/v1beta1/projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/reasoningEngines/6045101735372914688/a2a/v1/message:send
+Payload: {"request":{"messageId":"msg-1790236837","role":"ROLE_USER","content":[{"text":"Can you check margin floor for SKU-HSE-4001?"}]}}
+
+HTTP Response Status: HTTP/2 403 Forbidden
+Raw HTTP Response Body:
+{
+  "error": {
+    "code": 403,
+    "message": "Permission 'aiplatform.reasoningEngines.query' denied on resource '//aiplatform.googleapis.com/projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/reasoningEngines/6045101735372914688' (or it may not exist).",
+    "status": "PERMISSION_DENIED",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+        "reason": "IAM_PERMISSION_DENIED",
+        "domain": "aiplatform.googleapis.com",
+        "metadata": {
+          "resource": "projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/reasoningEngines/6045101735372914688",
+          "permission": "aiplatform.reasoningEngines.query"
+        }
+      }
+    ]
+  }
+}
+
+2. FRONT-DESK ESCALATION CALL (Price Match Agent):
+Endpoint: https://us-west1-aiplatform.googleapis.com/v1beta1/projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/reasoningEngines/2203531253225881600:streamQuery
+Payload: {"input":{"prompt":"Competitor BetaBuy has item SKU-HSE-4001 listed for $296.65 (shelf price $349.00). Can we price match this?"}}
+
+HTTP Response Status: HTTP/2 400 Bad Request
+Raw HTTP Response Body:
+[{
+  "error": {
+    "code": 400,
+    "message": "Reasoning Engine Execution failed.",
+    "status": "INVALID_ARGUMENT"
+  }
+}]
+
+3. PROJECT-WIDE IAM INVOKER PRINCIPALS (16 PRINCIPALS):
+principal://agents.global.org-616463121992.system.id.goog/resources/aiplatform/projects/739897231255/locations/us-west1/reasoningEngines/2203531253225881600
+principal://agents.global.org-616463121992.system.id.goog/resources/aiplatform/projects/739897231255/locations/us-west1/reasoningEngines/6045101735372914688
+serviceAccount:739897231255@cloudbuild.gserviceaccount.com
+serviceAccount:739897231255@cloudservices.gserviceaccount.com
+serviceAccount:739897231255-compute@developer.gserviceaccount.com
+serviceAccount:admiral@qwiklabs-services-prod.iam.gserviceaccount.com
+serviceAccount:antigravity-sa@qwiklabs-gcp-02-9bc675d0f8db.iam.gserviceaccount.com
+serviceAccount:lfs-automation@labs-for-sales-automation.iam.gserviceaccount.com
+serviceAccount:novasmart-customer-sa@qwiklabs-gcp-02-9bc675d0f8db.iam.gserviceaccount.com
+serviceAccount:novasmart-deployer-sa@qwiklabs-gcp-02-9bc675d0f8db.iam.gserviceaccount.com
+serviceAccount:novasmart-promo-sa@qwiklabs-gcp-02-9bc675d0f8db.iam.gserviceaccount.com
+serviceAccount:qwiklabs-gcp-02-9bc675d0f8db@qwiklabs-gcp-02-9bc675d0f8db.iam.gserviceaccount.com
+serviceAccount:service-739897231255@gcp-sa-aiplatform.iam.gserviceaccount.com
+serviceAccount:service-739897231255@gcp-sa-aiplatform-re.iam.gserviceaccount.com
+serviceAccount:service-739897231255@gcp-sa-discoveryengine.iam.gserviceaccount.com
+user:student-00-cccd9086fbbf@qwiklabs.net

@@ -1,0 +1,34 @@
+NovaSmart Governance Lab - Module 4 Step 2 Evidence Log
+Generated At: 2026-09-24 08:28:58 UTC
+Location: us-west1
+
+================================================================================
+1. EXECUTED PATCH MUTATION & RE-READ VERIFICATION
+================================================================================
+Target Resource: projects/739897231255/locations/us-west1/reasoningEngines/6045101735372914688 (Markdown Strategy Agent)
+PATCH Endpoint: https://us-west1-aiplatform.googleapis.com/v1beta1/projects/739897231255/locations/us-west1/reasoningEngines/6045101735372914688?updateMask=spec.deploymentSpec.env
+
+Patch Action: Updated OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT from lowercase "span_and_event" to uppercase "SPAN_AND_EVENT".
+Preservation Status: All 12 other environment variables (including GOOGLE_CLOUD_AGENT_ENGINE_ENABLE_TELEMETRY, GCP_PROJECT_ID, GEMINI_MODEL) preserved intact without modification.
+
+Live Readback Verification:
+  ReasoningEngine: projects/739897231255/locations/us-west1/reasoningEngines/6045101735372914688
+  UpdateTime: 2026-09-24T08:28:46.464370Z
+  spec.deploymentSpec.env:
+    - GOOGLE_CLOUD_AGENT_ENGINE_ENABLE_TELEMETRY: "true"
+    - OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT: "SPAN_AND_EVENT"
+
+================================================================================
+2. CHANGE RECORD
+================================================================================
+Change: Enabled OpenTelemetry GenAI message content capture (SPAN_AND_EVENT) on Markdown Strategy Agent
+Resource: projects/739897231255/locations/us-west1/reasoningEngines/6045101735372914688
+When: 2026-09-24 08:28:46 UTC
+Undo: curl -X PATCH -H "Authorization: Bearer $(gcloud auth print-access-token)" -H "Content-Type: application/json" "https://us-west1-aiplatform.googleapis.com/v1beta1/projects/739897231255/locations/us-west1/reasoningEngines/6045101735372914688?updateMask=spec.deploymentSpec.env" -d '{"spec":{"deploymentSpec":{"env":[{"name":"OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT","value":"span_and_event"}]}}}'
+
+================================================================================
+3. AUDIT VERIFICATION & COVERAGE SUMMARY
+================================================================================
+Check 1: PATCH spec.deploymentSpec.env on Markdown Strategy Agent -> CONFIRMED (HTTP 200 OK)
+Check 2: Live Re-read Verification -> CONFIRMED (OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT = "SPAN_AND_EVENT")
+Coverage: 1 agent updated, 0 errors.

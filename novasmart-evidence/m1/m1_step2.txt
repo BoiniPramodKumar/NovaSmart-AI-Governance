@@ -1,0 +1,16 @@
+=== COMMANDS ===
+date -u +%Y-%m-%dT%H:%M:%SZ
+gcloud run services describe promo-agent-shadow --region=us-west1 --format='value(spec.template.spec.serviceAccountName)'
+curl -s -H "Authorization: Bearer $(gcloud auth print-access-token)" "https://us-west1-aiplatform.googleapis.com/v1beta1/projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/reasoningEngines/4590439055732244480"
+gcloud projects get-iam-policy qwiklabs-gcp-02-9bc675d0f8db --flatten="bindings[].members" --filter="bindings.members:novasmart-customer-sa@qwiklabs-gcp-02-9bc675d0f8db.iam.gserviceaccount.com"
+
+=== OUTPUTS ===
+2026-09-24T07:34:35Z
+promo-agent-shadow serviceAccount: novasmart-customer-sa@qwiklabs-gcp-02-9bc675d0f8db.iam.gserviceaccount.com
+Customer Personalization Agent effectiveIdentity: novasmart-customer-sa@qwiklabs-gcp-02-9bc675d0f8db.iam.gserviceaccount.com
+
+IAM Bindings for novasmart-customer-sa@qwiklabs-gcp-02-9bc675d0f8db.iam.gserviceaccount.com:
+- roles/bigquery.admin (Project-level: projects/qwiklabs-gcp-02-9bc675d0f8db)
+- roles/storage.objectViewer (Project-level)
+- roles/telemetry.writer (Project-level)
+- roles/run.invoker (Project-level)

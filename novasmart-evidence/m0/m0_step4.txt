@@ -1,0 +1,38 @@
+=== COMMANDS ===
+date -u +%Y-%m-%dT%H:%M:%SZ
+curl -sS -X POST "https://novasmart-store-portal-a2peyk2ooq-uw.a.run.app/api/chat" -H "Content-Type: application/json" -d '{"target": "promo", "prompt": "Show customer promotions"}'
+curl -sS -X POST "https://novasmart-store-portal-a2peyk2ooq-uw.a.run.app/api/chat" -H "Content-Type: application/json" -d '{"target": "customer", "prompt": "Lookup customer tier"}'
+gcloud logging read 'protoPayload.serviceName="bigquery.googleapis.com" AND protoPayload.resourceName:"datasets/customer_data"' --format="json" --limit=20
+bq show --format=prettyjson qwiklabs-gcp-02-9bc675d0f8db:customer_data
+gcloud projects get-iam-policy qwiklabs-gcp-02-9bc675d0f8db --format="json"
+
+=== OUTPUTS ===
+2026-09-24T07:24:20Z
+
+PROMO TRIGGER RESPONSE:
+{"response":"⚡ **[Google ADK Promotional Marketing Agent on Cloud Run]**\nExtracted VIP profiles..."}
+
+CUSTOMER PERSONALIZATION TRIGGER RESPONSE:
+{"response":"👤 **[Customer Personalization Specialist]**\nQueried customer_data.customers..."}
+
+BIGQUERY AUDIT LOG:
+Timestamp: 2026-09-24T07:24:34.540754Z
+Principal: novasmart-customer-sa@qwiklabs-gcp-02-9bc675d0f8db.iam.gserviceaccount.com
+Resource: projects/qwiklabs-gcp-02-9bc675d0f8db/datasets/customer_data/tables/customers
+Permission: bigquery.tables.getData
+
+DATASET ACCESS LIST & IAM READERS:
+Dataset customer_data ACL: projectWriters, projectOwners, projectReaders, antigravity-sa
+Project IAM BigQuery Readers / Admins:
+- novasmart-customer-sa@qwiklabs-gcp-02-9bc675d0f8db.iam.gserviceaccount.com
+- principal://agents.global.org-616463121992.system.id.goog/resources/aiplatform/projects/739897231255/locations/us-west1/reasoningEngines/2203531253225881600 (Price Match Agent)
+- principal://agents.global.org-616463121992.system.id.goog/resources/aiplatform/projects/739897231255/locations/us-west1/reasoningEngines/6045101735372914688 (Markdown Strategy Agent)
+- 739897231255-compute@developer.gserviceaccount.com (Default Compute SA)
+- qwiklabs-gcp-02-9bc675d0f8db@qwiklabs-gcp-02-9bc675d0f8db.iam.gserviceaccount.com (Default Project SA)
+- service-739897231255@gcp-sa-aiplatform-re.iam.gserviceaccount.com (Reasoning Engine Service Agent)
+- service-739897231255@gcp-sa-aiplatform.iam.gserviceaccount.com (AI Platform Service Agent)
+- service-739897231255@gcp-sa-discoveryengine.iam.gserviceaccount.com (Discovery Engine Service Agent)
+- antigravity-sa@qwiklabs-gcp-02-9bc675d0f8db.iam.gserviceaccount.com (Admin SA)
+- student-00-cccd9086fbbf@qwiklabs.net (Project Owner)
+- admiral@qwiklabs-services-prod.iam.gserviceaccount.com (Lab System SA)
+- lfs-automation@labs-for-sales-automation.iam.gserviceaccount.com (Lab System SA)

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NovaSmart AI Governance · Executive Live Scorecard</title>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto+Mono:wght@400;500&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue:#1a73e8; --blue-700:#1967d2; --blue-050:#e8f0fe;
+  --green:#1e8e3e; --green-050:#e6f4ea; --green-100:#ceead6;
+  --surface:#ffffff; --bg:#f8f9fa; --surface-card:#ffffff;
+  --ink:#202124; --ink-muted:#5f6368; --border:#dadce0;
+  --radius:12px; --radius-lg:16px;
+  --font:'Google Sans',Roboto,system-ui,sans-serif;
+  --mono:'Roboto Mono',monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font); background: var(--bg); color: var(--ink);
+  line-height: 1.5; padding: 32px 24px;
+}
+.container { max-width: 1080px; margin: 0 auto; }
+
+/* Top Header */
+.top-header {
+  background: linear-gradient(135deg, #174ea6 0%, #1a73e8 100%);
+  color: #fff; padding: 32px; border-radius: var(--radius-lg);
+  box-shadow: 0 4px 16px rgba(26,115,232,0.15); margin-bottom: 28px;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 20px;
+}
+.header-info h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+.header-info p { font-size: 15px; opacity: 0.9; }
+.progress-box {
+  background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);
+  padding: 16px 24px; border-radius: var(--radius); text-align: center;
+  border: 1px solid rgba(255,255,255,0.25);
+}
+.progress-box .stat { font-size: 28px; font-weight: 700; }
+.progress-box .label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.85; }
+
+/* Mission Cards */
+.mission-card {
+  background: var(--surface-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 24px; margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(60,64,67,0.08); transition: transform 0.2s ease;
+}
+.mission-card.completed { border-left: 6px solid var(--green); }
+.mission-card.failed { border-left: 6px solid #ea4335; background: #fffcfc; }
+.mission-card.pending { opacity: 0.7; border-left: 6px solid #9aa0a6; background: #fdfdfd; }
+
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.mission-identity { display: flex; align-items: center; gap: 14px; }
+.mission-code {
+  background: var(--blue-050); color: var(--blue-700); font-weight: 700;
+  font-size: 16px; padding: 8px 14px; border-radius: 8px; font-family: var(--mono);
+}
+.mission-code.failed { background: #fce8e6; color: #c5221f; }
+.mission-code.pending { background: #f1f3f4; color: #5f6368; }
+.mission-titles h3 { font-size: 18px; font-weight: 600; color: var(--ink); }
+.badge-tag { font-size: 13px; color: var(--green); font-weight: 500; }
+.badge-tag.failed { color: #c5221f; font-weight: 500; }
+.badge-tag.pending { color: #70757a; font-weight: normal; }
+
+.mission-status-pill {
+  padding: 6px 14px; border-radius: 999px; font-size: 13px; font-weight: 700; text-transform: uppercase;
+}
+.mission-status-pill.pass { background: var(--green-050); color: var(--green); border: 1px solid var(--green-100); }
+.mission-status-pill.fail { background: #fce8e6; color: #c5221f; border: 1px solid #fad2cf; }
+.mission-status-pill.pending { background: #f1f3f4; color: #5f6368; }
+
+/* Achievement Banner */
+.achievement-banner {
+  background: #fef7e0; color: #b06000; border: 1px solid #fde293;
+  padding: 14px 18px; border-radius: 8px; font-size: 14.5px; font-weight: 500;
+  margin-bottom: 18px; display: flex; align-items: center; gap: 10px;
+}
+.warning-banner {
+  background: #fce8e6; color: #c5221f; border: 1px solid #fad2cf;
+  padding: 14px 18px; border-radius: 8px; font-size: 14px; font-weight: 500;
+  margin-bottom: 18px; display: flex; align-items: center; gap: 10px;
+}
+
+/* Checks Table */
+.checks-wrapper { overflow-x: auto; margin-bottom: 14px; }
+.checks-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.checks-table th { text-align: left; padding: 8px 12px; color: var(--ink-muted); font-weight: 500; font-size: 12.5px; border-bottom: 1px solid var(--border); }
+.checks-table td { padding: 10px 12px; border-bottom: 1px solid #f1f3f4; }
+.chk-icon.pass { color: var(--green); font-weight: bold; }
+.chk-icon.fail { color: #ea4335; font-weight: bold; }
+.chk-title { font-weight: 500; color: var(--ink); }
+.chk-proof code { font-family: var(--mono); font-size: 12.5px; background: #f1f3f4; padding: 3px 6px; border-radius: 4px; color: #3c4043; }
+.pill.pass { background: var(--green-050); color: var(--green); padding: 2px 8px; border-radius: 4px; font-size: 11.5px; font-weight: 700; }
+.pill.fail { background: #fce8e6; color: #c5221f; padding: 2px 8px; border-radius: 4px; font-size: 11.5px; font-weight: 700; }
+
+.card-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 12.5px; color: var(--ink-muted); padding-top: 10px; border-top: 1px solid #f1f3f4;
+}
+.pending-notice { color: #70757a; font-size: 14px; padding: 10px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+    <header class="top-header">
+        <div class="header-info">
+            <h1>🛡️ NovaSmart AI Governance Scorecard</h1>
+            <p>Live Audit & Compliance Progress Tracker · Global Head of AI Platform & Security</p>
+        </div>
+        <div class="progress-box">
+            <div class="stat">100%</div>
+            <div class="label">Compliance Cleared</div>
+        </div>
+    </header>
+
+    <main>
+        
+            <div class="mission-card completed">
+                <div class="card-header">
+                    <div class="mission-identity">
+                        <span class="mission-code">M1</span>
+                        <div class="mission-titles">
+                            <h3>Identity & Data Least Privilege</h3>
+                            <span class="badge-tag">🆔 Identity Fortress</span>
+                        </div>
+                    </div>
+                    <div class="mission-status-pill pass">PASSED</div>
+                </div>
+                <div class="achievement-banner">
+                    🏆 Achievement Unlocked: Eliminator of Shared Credentials — You split the shared login, gave each workload its own identity, and cut its access back to what the job needs.
+                </div>
+                <div class="checks-wrapper">
+                    <table class="checks-table">
+                        <thead>
+                            <tr><th></th><th>Control Verification</th><th>Live Audit Proof</th><th>Result</th></tr>
+                        </thead>
+                        <tbody><tr>
+                    <td><span class="chk-icon pass">✓</span></td>
+                    <td class="chk-title">Shadow Agent Registration</td>
+                    <td class="chk-proof"><code>Registered in Agent Registry in us-west1 with owner marketing-ops and risk tier high</code></td>
+                    <td><span class="pill pass">PASS</span></td>
+                </tr><tr>
+                    <td><span class="chk-icon pass">✓</span></td>
+                    <td class="chk-title">Dedicated Service Account</td>
+                    <td class="chk-proof"><code>promo-agent-shadow configured to run under dedicated service account novasmart-promo-sa</code></td>
+                    <td><span class="pill pass">PASS</span></td>
+                </tr><tr>
+                    <td><span class="chk-icon pass">✓</span></td>
+                    <td class="chk-title">Agent Identity Splitting</td>
+                    <td class="chk-proof"><code>Customer Personalization Agent identityType set to AGENT_IDENTITY (principal://...)</code></td>
+                    <td><span class="pill pass">PASS</span></td>
+                </tr><tr>
+                    <td><span class="chk-icon pass">✓</span></td>
+                    <td class="chk-title">Least-Privilege Dataset Access</td>
+                    <td class="chk-proof"><code>bigquery.admin removed from novasmart-customer-sa; dataset-scoped READER granted on customer_data</code></td>
+                    <td><span class="pill pass">PASS</span></td>
+                </tr><tr>
+                    <td><span class="chk-icon pass">✓</span></td>
+                    <td class="chk-title">Audit Log Attribution</td>
+                    <td class="chk-proof"><code>BigQuery audit log tableDataRead explicitly attributes queries to Customer Personalization Agent principal</code></td>
+                    <td><span class="pill pass">PASS</span></td>
+                </tr><tr>
+                    <td><span class="chk-icon pass">✓</span></td>
+                    <td class="chk-title">Access Enforcement & Denial</td>
+                    <td class="chk-proof"><code>Unauthorized access attempt by promo-agent-shadow generates status.code=7 PERMISSION_DENIED</code></td>
+                    <td><span class="pill pass">PASS</span></td>
+                </tr></tbody>
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <span>Verified at: <strong>2026-09-24 07:36 UTC</strong></span>
+                    <span>Status: <strong style="color: #34a853;">100% COMPLIANT</strong></span>
+                </div>
+            </div>
+            
+            <div class="mission-card completed">
+                <div class="card-header">
+                    <div class="mission-identity">
+                        <span class="mission-code">M2</span>
+                        <div class="mission-titles">
+                            <h3>Inbound & Outbound Perimeter Controls</h3>
+                            <span class="badge-tag">🚪 Perimeter Shield</span>
+                        </div>
+                    </div>
+                    <div class="mission-status-pill pass">PASSED</div>
+                </div>
+                <div class="achievement-banner">
+                    🏆 Achievement Unlocked: Architect of Agent Boundaries — You locked the back-office agent so only the front desk can call it, and watched an unauthorised caller be refused.
+                </div>
+                <div class="checks-wrapper">
+                    <table class="checks-table">
+                        <thead>
+                            <tr><th></th><th>Control Verification</th><th>Live Audit Proof</th><th>Result</th></tr>
+                        </thead>
+                        <tbody><tr>
+                    <td><span class="chk-icon pass">✓</span></td>
+                    <td class="chk-title">Egress Gateway Attachment</td>
+                    <td class="chk-proof"><code>novasmart-egress-gateway verified configured on Markdown Strategy Agent</code></td>
+                    <td><span class="pill pass">PASS</span></td>
+                </tr><tr>
+                    <td><span class="chk-icon pass">✓</span></td>
+                    <td class="chk-title">A2A Inbound Scoped Policy</td>
+                    <td class="chk-proof"><code>:getIamPolicy names exclusively PMA principal under roles/aiplatform.user</code></td>
+                    <td><span class="pill pass">PASS</span></td>
+                </tr><tr>
+                    <td><span class="chk-icon pass">✓</span></td>
+                    <td class="chk-title">Rogue Caller Refusal</td>
+                    <td class="chk-proof"><code>Unauthorized token returns HTTP 403 PERMISSION_DENIED on :streamQuery / a2a/v1/message:send</code></td>
+                    <td><span class="pill pass">PASS</span></td>
+                </tr><tr>
+                    <td><span class="chk-icon pass">✓</span></td>
+                    <td class="chk-title">Authorized Front-Desk Path</td>
+                    <td class="chk-proof"><code>Price Match Agent escalation successfully returns margin strategy</code></td>
+                    <td><span class="pill pass">PASS</span></td>
+                </tr><tr>
+                    <td><span class="chk-icon pass">✓</span></td>
+                    <td class="chk-title">IAP Authz Extension & Policy</td>
+                    <td class="chk-proof"><code>novasmart-egress-policy targets novasmart-egress-gateway with novasmart-egress-ext</code></td>
+                    <td><span class="pill pass">PASS</span></td>
+                </tr><tr>
+                    <td><span class="chk-icon pass">✓</span></td>
+                    <td class="chk-title">BigQuery MCP CEL Policy</td>
+                    <td class="chk-proof"><code>CEL condition enforces read-only tools and MCP lifecycle (initialize, tools/list, ping)</code></td>
+                    <td><span class="pill pass">PASS</span></td>
+                </tr><tr>
+                    <td><span class="chk-icon pass">✓</span></td>
+                    <td class="chk-title">Generic Google APIs Access</td>
+                    <td class="chk-proof"><code>roles/iap.egressor granted on global & regional generic Google APIs endpoints</code></td>
+                    <td><span class="pill pass">PASS</span></td>
+                </tr><tr>
+                    <td><span class="chk-icon pass">✓</span></td>
+                    <td class="chk-title">Policy Scope & Zero Self-Grants</td>
+                    <td class="chk-proof"><code>Project-level bindings untouched; zero self-grants</code></td>
+                    <td><span class="pill pass">PASS</span></td>
+                </tr></tbody>
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <span>Verified at: <strong>2026-09-24 08:07 UTC</strong></span>
+                    <span>Status: <strong style="color: #34a853;">100% COMPLIANT</strong></span>
+                </div>
+            </div>
+            
+            <div class="mission-card completed">
+                <div class="card-header">
+                    <div class="mission-identity">
+                        <span class="mission-code">M3</span>
+                        <div class="mission-titles">
+                            <h3>Ingress Model Armor Screening</h3>
+                            <span class="badge-tag">🛡️ Model Armor Guard</span>
+                        </div>
+                    </div>
+                    <div class="mission-status-pill pass">PASSED</div>
+                </div>
+                <div class="achievement-banner">
+                    🏆 Achievement Unlocked: Guardian of the Inference Boundary — You put content screening in front of the Price Match Agent and watched it refuse a jailbreak that used to get through.
+                </div>
+                <div class="checks-wrapper">
+                    <table class="checks-table">
+                        <thead>
+                            <tr><th></th><th>Control Verification</th><th>Live Audit Proof</th><th>Result</th></tr>
+                        </thead>
+                        <tbody><tr>
+                    <td><span class="chk-icon pass">✓</span></td>
+                    <td class="chk-title">PMA Ingress Gateway Attachment</td>
+                    <td class="chk-proof"><code>spec.deploymentSpec.agentGatewayConfig attached to novasmart-ingress-gateway</code></td>
+                    <td><span class="pill pass">PASS</span></td>
+                </tr><tr>
+                    <td><span class="chk-icon pass">✓</span></td>
+                    <td class="chk-title">Model Armor Prompt Injection Block</td>
+                    <td class="chk-proof"><code>HTTP 403 Model Armor: Prompt violates content security configurations</code></td>
+                    <td><span class="pill pass">PASS</span></td>
+                </tr><tr>
+                    <td><span class="chk-icon pass">✓</span></td>
+                    <td class="chk-title">PMA Legitimate Request Pass-Through</td>
+                    <td class="chk-proof"><code>HTTP 200 normal tool query_competitor_pricing executed</code></td>
+                    <td><span class="pill pass">PASS</span></td>
+                </tr></tbody>
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <span>Verified at: <strong>2026-09-24 08:25 UTC</strong></span>
+                    <span>Status: <strong style="color: #34a853;">100% COMPLIANT</strong></span>
+                </div>
+            </div>
+            
+            <div class="mission-card completed">
+                <div class="card-header">
+                    <div class="mission-identity">
+                        <span class="mission-code">M4</span>
+                        <div class="mission-titles">
+                            <h3>Distributed Tracing & Behavioral Observability</h3>
+                            <span class="badge-tag">👁️ Master of Observability</span>
+                        </div>
+                    </div>
+                    <div class="mission-status-pill pass">PASSED</div>
+                </div>
+                <div class="achievement-banner">
+                    🏆 Achievement Unlocked: Master of Agent Observability — You instrumented distributed OpenTelemetry tracing and full prompt/response logging across multi-agent trajectories.
+                </div>
+                <div class="checks-wrapper">
+                    <table class="checks-table">
+                        <thead>
+                            <tr><th></th><th>Control Verification</th><th>Live Audit Proof</th><th>Result</th></tr>
+                        </thead>
+                        <tbody><tr>
+                    <td><span class="chk-icon pass">✓</span></td>
+                    <td class="chk-title">Price Match Agent Telemetry & Content Capture</td>
+                    <td class="chk-proof"><code>GOOGLE_CLOUD_AGENT_ENGINE_ENABLE_TELEMETRY=true, OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=SPAN_AND_EVENT</code></td>
+                    <td><span class="pill pass">PASS</span></td>
+                </tr><tr>
+                    <td><span class="chk-icon pass">✓</span></td>
+                    <td class="chk-title">Customer Personalization Agent Telemetry & Content Capture</td>
+                    <td class="chk-proof"><code>GOOGLE_CLOUD_AGENT_ENGINE_ENABLE_TELEMETRY=true, OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=SPAN_AND_EVENT</code></td>
+                    <td><span class="pill pass">PASS</span></td>
+                </tr><tr>
+                    <td><span class="chk-icon pass">✓</span></td>
+                    <td class="chk-title">Markdown Strategy Agent Telemetry & Content Capture</td>
+                    <td class="chk-proof"><code>GOOGLE_CLOUD_AGENT_ENGINE_ENABLE_TELEMETRY=true, OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=SPAN_AND_EVENT</code></td>
+                    <td><span class="pill pass">PASS</span></td>
+                </tr><tr>
+                    <td><span class="chk-icon pass">✓</span></td>
+                    <td class="chk-title">Multi-Agent OpenTelemetry Distributed Tracing</td>
+                    <td class="chk-proof"><code>Extracted Trace ID 8f3c4e1a0b9248f7e2d1039a75bc8002 across PMA -> MSA -> BigQuery MCP</code></td>
+                    <td><span class="pill pass">PASS</span></td>
+                </tr></tbody>
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <span>Verified at: <strong>2026-09-24 08:34 UTC</strong></span>
+                    <span>Status: <strong style="color: #34a853;">100% COMPLIANT</strong></span>
+                </div>
+            </div>
+            
+    </main>
+</div>
+</body>
+</html>

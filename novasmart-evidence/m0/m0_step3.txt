@@ -1,0 +1,22 @@
+=== COMMANDS ===
+date -u +%Y-%m-%dT%H:%M:%SZ
+gcloud run services list
+curl -s -H "Authorization: Bearer $(gcloud auth print-access-token)" "https://us-west1-aiplatform.googleapis.com/v1beta1/projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/reasoningEngines"
+
+=== OUTPUTS ===
+2026-09-24T06:48:50Z
+
+CLOUD RUN SERVICES (us-west1):
+SERVICE: promo-agent-shadow, REGION: us-west1, URL: https://promo-agent-shadow-739897231255.us-west1.run.app
+SERVICE: novasmart-mcp, REGION: us-west1, URL: https://novasmart-mcp-739897231255.us-west1.run.app
+SERVICE: novasmart-store-portal, REGION: us-west1, URL: https://novasmart-store-portal-739897231255.us-west1.run.app
+
+MANAGED REASONING ENGINES (us-west1):
+displayName: Customer Personalization Agent
+name: projects/739897231255/locations/us-west1/reasoningEngines/4590439055732244480
+
+displayName: Markdown Strategy Agent
+name: projects/739897231255/locations/us-west1/reasoningEngines/6045101735372914688
+
+displayName: Price Match Agent
+name: projects/739897231255/locations/us-west1/reasoningEngines/2203531253225881600

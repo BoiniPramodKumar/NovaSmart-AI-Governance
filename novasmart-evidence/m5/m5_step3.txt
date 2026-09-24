@@ -1,0 +1,7 @@
+=== NovaSmart M5 Step 3: Tougher Scenario Set Synthesis ===
+Generator: agents-cli eval dataset synthesize (experimental)
+Target: /tmp/m5-local (throwaway local scaffold project)
+Grounding Context: Real catalogue (SKU-HSE-4001, SKU-HSE-4455, SKU-HSE-4002) and competitor pricing (AlphaStore, BetaBuy)
+Count Requested: 10 scenarios
+Scenarios Generated: 10
+Estate Status: Untouched / Nothing registered / Nothing deployed

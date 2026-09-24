@@ -1,0 +1,7 @@
+=== COMMANDS ===
+date -u +%Y-%m-%dT%H:%M:%SZ
+echo "Refusal gate reached: user requested registering promo agent in Module 0."
+
+=== OUTPUTS ===
+2026-09-24T07:32:29Z
+Module 0 is strictly read-only discovery ("See Everything"). Registration, identity right-sizing, and catalog onboarding take place in Module 1 ("Take Action"). No state changes performed.

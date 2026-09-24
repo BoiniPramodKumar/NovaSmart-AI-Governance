@@ -1,0 +1,73 @@
+NovaSmart Governance Lab - Module 3 Step 3 Evidence Log
+Generated At: 2026-09-24 08:16:45 UTC
+Location: us-west1
+
+================================================================================
+1. EXECUTED COMMANDS & MUTATIONS
+================================================================================
+Command 1: Provision Ingress Gateway (novasmart-ingress-gateway)
+  gcloud beta network-services agent-gateways import novasmart-ingress-gateway --source=/tmp/ingress-gw.yaml --location=us-west1
+
+Command 2: Provision Model Armor Authz Extension (nvst-ma-ext)
+  gcloud service-extensions authz-extensions import nvst-ma-ext --source=/tmp/ma-ext.yaml --location=us-west1
+
+Command 3: Provision Content Authz Policy (nvst-ma-policy)
+  REST API: POST https://networksecurity.googleapis.com/v1/projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/authzPolicies?authzPolicyId=nvst-ma-policy
+
+Command 4: Attach Price Match Agent to Ingress Gateway
+  REST API: PATCH https://us-west1-aiplatform.googleapis.com/v1beta1/projects/739897231255/locations/us-west1/reasoningEngines/2203531253225881600?updateMask=spec.deploymentSpec.agentGatewayConfig
+
+================================================================================
+2. RAW READBACK OUTPUTS
+================================================================================
+--- Agent Gateway Status ---
+Name: projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/agentGateways/novasmart-ingress-gateway
+Governed Access Path: CLIENT_TO_AGENT
+Protocols: MCP
+
+--- Authz Extension Status ---
+Name: projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/authzExtensions/nvst-ma-ext
+Service: modelarmor.us-west1.rep.googleapis.com
+Template: projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/templates/nvst-jailbreak-template
+
+--- Authz Policy Status ---
+Name: projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/authzPolicies/nvst-ma-policy
+Policy Profile: CONTENT_AUTHZ
+Action: CUSTOM
+
+--- Price Match Agent Gateway Attachment Readback ---
+ReasoningEngine: projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/reasoningEngines/2203531253225881600
+agentGatewayConfig:
+  clientToAgentConfig:
+    agentGateway: projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/agentGateways/novasmart-ingress-gateway
+
+================================================================================
+3. CHANGE RECORDS
+================================================================================
+Change: Created Ingress Agent Gateway novasmart-ingress-gateway
+Resource: projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/agentGateways/novasmart-ingress-gateway
+When: 2026-09-24 08:15:47 UTC
+Undo: gcloud network-services agent-gateways delete novasmart-ingress-gateway --location=us-west1 --quiet
+
+Change: Created Model Armor Authz Extension nvst-ma-ext
+Resource: projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/authzExtensions/nvst-ma-ext
+When: 2026-09-24 08:15:53 UTC
+Undo: gcloud service-extensions authz-extensions delete nvst-ma-ext --location=us-west1 --quiet
+
+Change: Created Content Authz Policy nvst-ma-policy
+Resource: projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/authzPolicies/nvst-ma-policy
+When: 2026-09-24 08:16:40 UTC
+Undo: gcloud network-security authz-policies delete nvst-ma-policy --location=us-west1 --quiet
+
+Change: Attached Price Match Agent to Ingress Gateway novasmart-ingress-gateway
+Resource: projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/reasoningEngines/2203531253225881600
+When: 2026-09-24 08:16:45 UTC
+Undo: curl -X PATCH -H "Authorization: Bearer $(gcloud auth print-access-token)" -H "Content-Type: application/json" "https://us-west1-aiplatform.googleapis.com/v1/projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/reasoningEngines/2203531253225881600?updateMask=spec.deploymentSpec.agentGatewayConfig" -d '{"spec":{"deploymentSpec":{}}}'
+
+================================================================================
+4. AUDIT VERIFICATION & COVERAGE SUMMARY
+================================================================================
+Check 1: Provision Ingress Gateway -> CONFIRMED (novasmart-ingress-gateway ACTIVE)
+Check 2: Bind Model Armor Template via Extension & Policy -> CONFIRMED (nvst-ma-ext & nvst-ma-policy ACTIVE)
+Check 3: Route Price Match Agent Ingress -> CONFIRMED (agentGatewayConfig attached)
+Coverage: 3 checks evidenced, 0 not verified.

@@ -1,0 +1,20 @@
+NovaSmart Governance Lab - Module 3 Step 6 Evidence Log & Audit Verification
+Generated At: 2026-09-24 08:25:35 UTC
+Location: us-west1
+
+================================================================================
+1. READ-ONLY AUDIT VERIFICATION TABLE
+================================================================================
+| Check | How I verified | Result |
+| :--- | :--- | :--- |
+| Price Match Agent Ingress Gateway Attachment | Readback of spec.deploymentSpec.agentGatewayConfig on ReasoningEngine 2203531253225881600 via AI Platform REST API | **PASSED:** Agent attached to projects/qwiklabs-gcp-02-9bc675d0f8db/locations/us-west1/agentGateways/novasmart-ingress-gateway |
+| Model Armor Ingress Prompt Injection Rejection | Re-sent byte-identical Step 1 adversarial jailbreak prompt to PMA streamQuery endpoint | **PASSED:** Blocked with HTTP 403 Model Armor: Prompt violates content security configurations |
+| Legitimate Price Match Request Pass-Through | Re-sent normal <=10% price match request to PMA streamQuery endpoint | **PASSED:** Returned HTTP 200 OK and executed BigQuery tool calculation |
+| Customer Personalization Agent (CPA) Ingress Screening | Audited CPA ReasoningEngine 4590439055732244480 endpoint protocol | **EXCLUDED (NOT COVERED):** CPA uses A2A message:stream protocol, which is outside Client-to-Agent MCP ingress gateway scope |
+
+================================================================================
+2. COVERAGE SUMMARY & SCORECARD STATUS
+================================================================================
+Coverage Summary: 3 checks evidenced, 1 not covered (endpoint scope limit).
+Mission 3 Governance Scorecard Status: PASS
+Scorecard File: /config/Desktop/governance_scorecard.html

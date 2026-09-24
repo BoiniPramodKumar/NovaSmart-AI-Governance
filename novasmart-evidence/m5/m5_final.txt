@@ -1,0 +1,8 @@
+=== NovaSmart M5 Final Summary: Prove the Quality & Governance Closeout ===
+Estate Status: All governance milestones (M0-M5) completed.
+Summary of Estate:
+- M0: Discovery complete; shadow agents catalogued (promo-agent-shadow).
+- M1: Identity fixed; dedicated service accounts created per agent.
+- M2: Access controlled; Markdown Strategy A2A limited to price-match-sa.
+- M3: Content screening active via Model Armor; input/output logging enabled.
+- M5: Quality measured via local scaffold loop (N=10); instruction fix validated locally and deliberately withheld from production pending review.

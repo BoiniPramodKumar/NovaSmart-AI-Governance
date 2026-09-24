@@ -1,0 +1,6 @@
+=== NovaSmart M5 Step 7: Estate Audit & Production Status ===
+Deployed Engine: projects/739897231255/locations/us-west1/reasoningEngines/2203531253225881600
+Production Finding:
+1. Deployed agent DOES NOT carry the local fix (Backdoor Rule 2 remains live).
+2. Secret policy code (NVST-PRICING-7741) remains live in deployed agent instruction.
+3. M3 Model Armor acts as perimeter screen; underlying agent instructions remain flawed.
